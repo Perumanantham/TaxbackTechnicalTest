@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+    <head>
+        <title>Transaction List</title>
+        <link href="css/bootstrap.css" rel="stylesheet" />
+        <link href="css/bootstrap.css" rel="stylesheet" />
+        <link href="css/bootstrap-theme.css" rel="stylesheet" />
+        <link href="css/app.css" rel="stylesheet" />
+        <script src="lib/angular.js"></script>
+        <script src="lib/jquery-1.11.1.js"></script>
+        <script src="lib/bootstrap.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div ng-app="txnsApp" ng-controller="txnsController" class="container no-padding">
+                <div class="modal fade" id="txnModel" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                <h4 class="modal-title" id="myModalLabel" ng-hide="editMode">Add Transaction</h4>
+                                <h4 class="modal-title" id="myModalLabel" ng-show="editMode">Edit Transaction</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal" role="form" name="addtxnform">
+                                    <div class="form-group">
+                                        <label for="title" class="col-sm-2 control-label">Email</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" ng-model="txn.user" class="form-control" placeholder="Your email" title="Enter your email" ng-readonly="true"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="title" class="col-sm-2 control-label">Currency</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control" ng-model="txn.currency">
+                                                <option value="EUR">EUR</option>
+                                                <option value="INR">INR</option>
+                                                <option value="GBP">GBP</option>
+                                                <option value="USD">USD</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="title" class="col-sm-2 control-label">Amount</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" ng-model="txn.amount" class="form-control" placeholder="Transaction amount" title="Enter your amount" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="title" class="col-sm-2 control-label">Txn Date</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" ng-model="txn.txn_date" class="form-control" title="Enter your amount" ng-readonly="true"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <span ng-hide="editMode">
+                                                <input type="submit" value="Add" ng-click="add()" class="btn btn-primary" />
+                                            </span>
+                                            <span ng-show="editMode">
+                                                <input type="submit" value="Update" ng-disabled="addtxnform.$invalid" ng-click="update()" class="btn btn-primary" />
+                                            </span>
+                                            <input type="button" value="Cancel" ng-click="cancel()" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-show="dlgerror">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <div ng-repeat="err in dlgerror" style="font-size: 10px; color: red;">
+                                              <div style="font-style: italic;">
+                                                {{$index+1}}. {{err}}
+                                              </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 no-padding">
+                    <div class="col-sm-4 no-padding">
+                        <h1>
+                            <div class="form-group">
+                                <div>
+                                    <input type="text" required ng-model="curruser" class="form-control" placeholder="Please enter user"/>
+                                </div>
+                            </div>
+                        </h1>
+                    </div>
+                    <div class="col-sm-4">
+                        <h1><button type="button" class="btn btn-sm btn-primary" ng-click="getAll()">Search</button></h1>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 no-padding" ng-if="curruser" ng-if="txns">
+                    <div class="col-sm-10 no-padding">
+                        <h1>Transaction List</h1>
+                    </div>
+                    <div class="no-padding pull-right">
+                        <h1>
+                            <button type="button" class="btn btn-xs btn-success" ng-click="showadd(txn)">Add Transaction</button>
+                        </h1>
+                    </div>
+                </div>
+                <table class="table table-hover" ng-if="txns.length > 0">
+                    <tr>
+                        <th>Txn ID#</th>
+                        <th>Email</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th><p class="pull-right">Action</p></th>
+                    </tr>
+
+                    <tr ng-repeat="txn in txns">
+                        <td><strong>{{ txn.id }}</strong></td>
+                        <td>
+                            <p>{{ txn.user }}</p>
+                        </td>
+                        <td>
+                            <p>{{ txn.currency }} {{ txn.amount }}</p>
+                        </td>
+                        <td>
+                            <p>{{ txn.txn_date | date : 'yyyy-MM-dd' }}</p>
+                        </td>
+                        <td>
+                            <p class="pull-right">
+                                <button type="button" class="btn btn-xs btn-info" ng-click="get(txn)">View</button>
+                                <button type="button" class="btn btn-xs btn-primary" ng-click="edit(txn)">Edit</button>
+                                <button type="button" class="btn btn-xs btn-danger" ng-click="showconfirm(txn)">Delete</button>
+                            </p>
+                        </td>
+                    </tr>
+                <hr/>
+                </table>
+
+                <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                <h4 class="modal-title" id="myModalLabel">Transaction</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal" role="form" name="viewtxn">
+                                    <div class="form-group">
+                                        <label for="id" class="col-sm-2 control-label">ID#</label>
+                                        <div class="col-sm-10">
+                                            {{txn.id}}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email" class="col-sm-2 control-label">Email</label>
+                                        <div class="col-sm-10">
+                                            {{txn.user}}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="amount" class="col-sm-2 control-label">Amount</label>
+                                        <div class="col-sm-10">
+                                            {{ txn.currency }} {{ txn.amount }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="txn_date" class="col-sm-2 control-label">Date</label>
+                                        <div class="col-sm-10">
+                                            {{ txn.txn_date | date : 'yyyy-MM-dd' }}
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                <h4 class="modal-title" id="myModalLabel">Confirm Action</h4>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure to delete?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" ng-click="delete()">Ok</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container no-padding" style="margin-top: 20px;">
+                    <div ng-show="error" class="alert alert-{{ error_cls }} alert-dismissible col-sm-12" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <p>{{ error }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        <script src="js/app.js"></script>
+    </body>
+</html>
