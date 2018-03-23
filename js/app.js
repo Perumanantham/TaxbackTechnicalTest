@@ -50,7 +50,7 @@ app.controller('txnsController', function PostController($scope, txnsFactory, $f
             $scope.txn = data;
             $('#viewModal').modal('show');
         }).error(function (data) {
-            $scope.error = "An Error has occured while Loading users! " + data.ExceptionMessage;
+            $scope.error = data.error;
         });
     };
 
@@ -64,7 +64,7 @@ app.controller('txnsController', function PostController($scope, txnsFactory, $f
                     $scope.error_cls = "info";
                 }
             }).error(function (data) {
-                $scope.error = "An Error has occured while Loading users! " + data.ExceptionMessage;
+                $scope.error = data.error;
             });
         } else {
             $scope.error = "Please enter user email";
@@ -118,7 +118,7 @@ app.controller('txnsController', function PostController($scope, txnsFactory, $f
             $('#confirmModal').modal('hide');
             $scope.txns.pop(currTxn);
         }).error(function (data) {
-            $scope.error = "An Error has occured while Deleting user! " + data.ExceptionMessage;
+            $scope.error = data.error;
             $('#confirmModal').modal('hide');
         });
     };
